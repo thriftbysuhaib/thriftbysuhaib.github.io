@@ -22,7 +22,7 @@ const localProducts = [
     {
         id: "footwear-1",
         name: "Made in Korea | Vintage Mule",
-        price: 1500,
+        price: 1200,
         category: "footwear",
         size: "EU 40 / US 7",
         condition: "Good",
