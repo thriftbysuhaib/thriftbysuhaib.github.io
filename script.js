@@ -9,7 +9,12 @@
 // Yahan baad mein apne products add kar sakte ho.
 // Har product ka unique "id" hona chahiye.
 
-const products = [
+// ==========================================
+// PRODUCTS
+// ==========================================
+
+// Existing website products
+const localProducts = [
 
     {
         id: "upper-1",
@@ -49,6 +54,71 @@ const products = [
 
 ];
 
+// Google Sheets API
+const PRODUCTS_API_URL =
+    "https://script.google.com/macros/s/AKfycbwZnzPc2J22Z7rQLxeuXwPGRdX42O6BUy7mG161Bl6uozOIyfZ4-pQ3KIXMo3D02qqv/exec";
+
+// Final products list
+let products = [...localProducts];
+
+// Load products from Google Sheet
+async function loadProducts() {
+
+    try {
+
+        const response = await fetch(
+            PRODUCTS_API_URL + "?t=" + Date.now()
+        );
+
+        if (!response.ok) {
+            throw new Error("Could not load products.");
+        }
+
+        const sheetProducts = await response.json();
+
+        const cleanedProducts = sheetProducts.map(function (product) {
+
+            return {
+                id: String(product.id || ""),
+                name: String(product.name || ""),
+                price: Number(product.price) || 0,
+                category: String(product.category || ""),
+                size: String(product.size || ""),
+                condition: String(product.condition || ""),
+                stock: Number(product.stock) || 0,
+                image: String(product.image || ""),
+                description: String(product.description || "")
+            };
+
+        });
+
+        // Sheet products are added to existing products
+        const existingIds = localProducts.map(function (product) {
+            return product.id;
+        });
+
+        products = [
+            ...localProducts,
+            ...cleanedProducts.filter(function (product) {
+                return !existingIds.includes(product.id);
+            })
+        ];
+
+        renderProducts();
+
+    } catch (error) {
+
+        console.error("Google Sheet error:", error);
+
+        // Website still works with existing products
+        products = [...localProducts];
+
+        renderProducts();
+
+    }
+
+}
+
 
 // ==========================================
 // SETTINGS
@@ -81,8 +151,9 @@ let currentCategory = "all";
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    renderProducts();
     updateCartCount();
+
+    loadProducts();
 
 });
 
