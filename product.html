@@ -277,7 +277,7 @@
 
     <!-- JAVASCRIPT -->
 
-    <script src="script.js?v=3"></script>
+    <script src="script.js?v=4"></script>
 
 
     <script>
@@ -834,10 +834,13 @@
         // LOAD PAGE
         // ==========================================
 
-        document.addEventListener(
-            "DOMContentLoaded",
-            loadProductPage
-        );
+        document.addEventListener("DOMContentLoaded", async function () {
+    if (window.productsReady) {
+        await window.productsReady;
+    }
+
+    loadProductPage();
+});
 
     </script>
 
