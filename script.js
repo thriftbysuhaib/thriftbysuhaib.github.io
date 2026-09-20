@@ -75,7 +75,7 @@ async function loadProducts() {
         }
 
         const sheetProducts = await response.json();
-
+alert("Sheet se " + sheetProducts.length + " products mile!");
         const cleanedProducts = sheetProducts.map(function (product) {
 
             return {
